@@ -1,5 +1,5 @@
 <?php
-namespace FancyMail;
+namespace FancyM;
 
 
 class smtp extends Task
@@ -26,10 +26,9 @@ var $user;
 
 var $pass;
 
-/* Private Variables */ 
+
 var $sock;
 
-/* Constractor */
 
 function smtp($relay_host = "", $smtp_port = 25,$auth = false,$user,$pass)
 

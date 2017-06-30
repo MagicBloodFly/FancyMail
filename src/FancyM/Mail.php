@@ -15,7 +15,9 @@ use pocketmine\Player;
 class Mail extends PluginBase implements Listener{
  
  public function onEnable(){
-     @mkdir($this->getDataFolder());
+    
+	@mkdir($this->getDataFolder());
+	@mkdir($this->getDataFolder(),0777,true);
 	$this->cfg = new Config($this->getDataFolder() . "Config.yml", CONFIG::YAML ,array(
 	"SMTP服务器地址"=>"",
 	"SMTP服务器端口"=>"",
@@ -27,7 +29,7 @@ class Mail extends PluginBase implements Listener{
 	"身份验证"=>"false",
 	"以上内容请认真填写,否则将出现错误"=>""
 		));	
-    @mkdir($this->getDataFolder());
+   
 	$this->pl = new Config($this->getDataFolder() . "Player.yml", CONFIG::YAML ,array(
  "玩家绑定的邮箱大全"=>""
 		));	
@@ -50,7 +52,9 @@ $n=$p->getName();
 if($this->pl->get($n)==null)
 {
 $p->sendMessage("§e<§aFancyMail§e>§b您还没有设置邮箱,请使用/fcmail绑定");
+
 $this->pl->set($n,"");
+$this->pl->save();
 }
 else
 {
@@ -128,6 +132,7 @@ $smtp->sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype)
             $s->sendMessage('绑定成功');
           
 		  $this->pl->set($s->getName(),$e);
+		  $this->pl->save();
 		   
         }else{
             $s->sendMessage('绑定失败');
@@ -137,11 +142,14 @@ $smtp->sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype)
 }
 
 public function is_email(String $email, $checkNS = true){
-    if(empty($email)) return false;
+    if(empty($email)) 
+		return false;
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return false;
     }
     if(!empty($checkNS)){
+		$e = explode('@',$email);
+        $domain = $e[1];
         if (!checkdnsrr($domain, 'MX')) {
             return false;
         }
@@ -157,17 +165,10 @@ public function is_email(String $email, $checkNS = true){
  */
 public function checkExists($email){
 	
-	$g=$this->pl->getAll();
 	
-	if($email==$g[$email])
-	{
-		return true;
-		
-	}
-	else
-	{
-		return false;
-	}
+	
+	if($this->pl->exists($email)) return true;
+	
     //TODO:检查邮箱是否被绑定过，绑定过返回TRUE，否则返回FALSE
 }
 
@@ -197,6 +198,9 @@ public function checkBind(Player $p){
 public function bindMail(Player $p, $e ){
     $pn = $p->getName();
     $cid = $p->getClientId();
+	
+	return true;
+	
     //TODO:绑定邮箱具体实现函数
 }
 
