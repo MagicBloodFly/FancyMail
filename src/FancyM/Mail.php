@@ -142,6 +142,8 @@ public function is_email(String $email, $checkNS = true){
         return false;
     }
     if(!empty($checkNS)){
+        $e = explode('@',$email);
+        $domain = $e[1];
         if (!checkdnsrr($domain, 'MX')) {
             return false;
         }
