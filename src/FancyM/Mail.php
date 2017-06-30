@@ -128,16 +128,8 @@ $smtp->sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype)
             $s->sendMessage('无效邮箱');
             return true;
         }
-        if($this->bindMail($s,$e)){
-            $s->sendMessage('绑定成功');
-          
-		  $this->pl->set($s->getName(),$e);
-		  $this->pl->save();
-		   
-        }else{
-            $s->sendMessage('绑定失败');
-        
-        }
+        $this->bindMail($s,$e)
+        $s->sendMessage('绑定成功');
     }
 }
 
@@ -197,9 +189,8 @@ public function checkBind(Player $p){
  */
 public function bindMail(Player $p, $e ){
     $pn = $p->getName();
-    $cid = $p->getClientId();
-	
-	return true;
+	$this->pl->set($pn,$e);
+	$this->pl->save();
 	
     //TODO:绑定邮箱具体实现函数
 }
