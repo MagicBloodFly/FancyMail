@@ -1,5 +1,5 @@
 <?php
-namespace FancyMail;
+namespace FancyM;
 
 use pocketmine\plugin\Plugin;
 use pocketmine\event\Listener;
@@ -50,7 +50,7 @@ $n=$p->getName();
 if($this->pl->get($n)==null)
 {
 $p->sendMessage("§e<§aFancyMail§e>§b您还没有设置邮箱,请使用/fcmail绑定");
-
+$this->pl->set($n,"");
 }
 else
 {
@@ -106,13 +106,13 @@ $smtp->sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype)
         }
 		else
 		{
-			$s-sendMessage("§e<§aFancyMail§e>§b请使用正确指令/fcmail help/info");
+			$s->sendMessage("§e<§aFancyMail§e>§b请使用正确指令/fcmail help/info");
 			
 		}
     }
     if($cmd=='fc'){
         if(empty($args[0])){
-            $s->sendMessage('§b请使用指令 /fc <自己的邮箱> 进行绑定\n§e示例:/fc xxxxx@qq.com');
+            $s->sendMessage("§b请使用指令 /fc <自己的邮箱> 进行绑定\n§e示例:/fc xxxxx@qq.com");
             return false;
         }
         $e = $args[0];
@@ -157,14 +157,16 @@ public function is_email(String $email, $checkNS = true){
  */
 public function checkExists($email){
 	
-	if($email==$this->pl->getAll())
+	$g=$this->pl->getAll();
+	
+	if($email==$g[$email])
 	{
-		return false;
+		return true;
 		
 	}
 	else
 	{
-		return true;
+		return false;
 	}
     //TODO:检查邮箱是否被绑定过，绑定过返回TRUE，否则返回FALSE
 }

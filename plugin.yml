@@ -3,3 +3,11 @@ main: FancyM\Mail
 version: 1.0.0
 api: [3.0.0]
 author: "Magic雪飞"
+commands:
+ fcmail:
+  description: "FC邮箱插件主指令"
+  usage: "/fcmail help/info"
+ fc:
+  description: "fc绑定邮箱"
+  usage: "/fc <Mail>"
+ 
