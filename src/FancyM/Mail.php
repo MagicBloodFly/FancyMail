@@ -60,21 +60,21 @@ else
 {
 require("smtp.php");
 
-$smtpserver = "$this->cfg->get('SMTP服务器地址')";
+$smtpserver = $this->cfg->get("SMTP服务器地址");
 
 $smtpserverport =$this->cfg->get("SMTP服务器端口");//SMTP服务器端口
 
-$smtpusermail = "$this->cfg->get('SMTP服务器的用户邮箱')";
+$smtpusermail = $this->cfg->get("SMTP服务器的用户邮箱");
 
-$smtpemailto = "$this->pl->get($n)";
+$smtpemailto = $this->pl->get($n."主邮箱");
 
-$smtpuser = "$this->cfg->get('发件人SMTP用户名')";
+$smtpuser = $this->cfg->get("发件人SMTP用户名");
 
-$smtppass = "$this->cfg->get('发件人SMTP用户名密码')";
+$smtppass = $this->cfg->get("发件人SMTP用户名密码");
 
-$mailsubject = "$this->cfg->get('邮件主题')";
+$mailsubject = $this->cfg->get("邮件主题");
 
-$mailbody = "$this->cfg->get('邮件内容')";//邮件内容
+$mailbody = $this->cfg->get("邮件内容");//邮件内容
 
 $mailtype = "TXT";
 
@@ -114,9 +114,9 @@ $smtp->sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype)
 			
 		}
     }
-    if($cmd=='fc'){
+    if($cmd=="fc"){
         if(empty($args[0])){
-            $s->sendMessage("§b请使用指令 /fc <自己的邮箱> 进行绑定\n§e示例:/fc xxxxx@qq.com");
+            $s->sendMessage("§e<§aFancyMail§e>§b请使用指令 /fc <自己的邮箱> 进行绑定\n§e示例:/fc xxxxx@qq.com §c只能绑定一次哦请谨慎绑定~");
             return false;
         }
         $e = $args[0];
@@ -129,9 +129,17 @@ $smtp->sendmail($smtpemailto, $smtpusermail, $mailsubject, $mailbody, $mailtype)
             return true;
         }
         if($this->bindMail($s,$e)){
+			if($this->pl->get($s->getName())=="已绑定")
+			{
+				$s->sendMessage("§e<§aFancyMail§e>§b您已经绑定过了!请勿连续绑定!");
+				return;
+			}
             $s->sendMessage('绑定成功');
           
-		  $this->pl->set($s->getName(),$e);
+		  $this->pl->set($e,$s->getName());
+		  $this->pl->set($s->getName()."主邮箱",$e);
+		  $this->pl->set($s->getName(),"已绑定");
+		  $this->pl->set("===========","==========");
 		  $this->pl->save();
 		   
         }else{
@@ -165,9 +173,17 @@ public function is_email(String $email, $checkNS = true){
  */
 public function checkExists($email){
 	
+	$g=$this->pl->getAll();
 	
-	
-	if($this->pl->exists($email)) return true;
+	if($g[$email]!==null)
+	{
+		return true;
+	}
+	else
+	{
+	return false;
+	}
+
 	
     //TODO:检查邮箱是否被绑定过，绑定过返回TRUE，否则返回FALSE
 }
